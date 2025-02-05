@@ -74,14 +74,32 @@ class CalculatorApp:
 
         Div = Button(self.master, padx=16, pady=16, bd=4, fg="black", font=('ariel', 20, 'bold'), text="/", bg="grey", command=lambda: self.btn_click("/"))
         Div.grid(row=5, column=3)
-        
-        # activity 2: add operations like parenthesis, mod, exponents, and delete below
-        # note that most other comments you see in this file will be for the challenge
-        
-        # Row 5
-        bequal = Button(self.master, padx=16, pady=16, bd=4, width=16, fg="black", font=('ariel', 20, 'bold'), text="=", bg="grey", command=self.answer)
-        bequal.grid(columnspan=4)
 
+        # Row 5
+        # added mod operation
+        bmod = Button(self.master, padx=16, pady=16, bd=4, fg="black", font=('ariel', 20, 'bold'), text="%", bg="grey", command=lambda: self.btn_click("%"))
+        bmod.grid(row=6, column=0)
+        
+        # added left parenthesis operation
+        blpar = Button(self.master, padx=16, pady=16, bd=4, fg="black", font=('ariel', 20, 'bold'), text="(", bg="grey", command=lambda: self.btn_click("("))
+        blpar.grid(row=6, column=1)
+        
+        # added right parenthesis operation
+        brpar = Button(self.master, padx=16, pady=16, bd=4, fg="black", font=('ariel', 20, 'bold'), text=")", bg="grey", command=lambda: self.btn_click(")"))
+        brpar.grid(row=6, column=2)
+        
+        # added exponents parenthesis operation
+        bexp = Button(self.master, padx=16, pady=16, bd=4, fg="black", font=('ariel', 20, 'bold'), text="xʸ", bg="grey", command=lambda: self.btn_click("**"))
+        bexp.grid(row=6, column=3)
+
+        # Row 6
+        # added delete operation
+        bdel = Button(self.master, padx=16, pady=16, bd=4, width=8, fg="black", font=('ariel', 20, 'bold'), text="DEL", bg="grey", command=self.delete)
+        bdel.grid(row=7, column=0, columnspan=2)
+        
+        # reformatted equal button
+        bequal = Button(self.master, padx=16, pady=16, bd=4, width=8, fg="black", font=('ariel', 20, 'bold'), text="=", bg="grey", command=self.answer)
+        bequal.grid(row=7, column=2, columnspan=2)
 
     def btn_click(self, num):
         result = self.logic.btn_click(num)
@@ -103,29 +121,42 @@ class CalculatorApp:
 class CalculatorLogic:
     def __init__(self):
         self.operator = ""
-        # add logic to keep track of what to do with saved answer for the challenge
+        # added logic to keep track of what to do with saved answer
+        self.reset_next_input = False
 
     def btn_click(self, num):
-        # add logic to keep track of what to do with saved answer for the challenge
-        # hint: checks to see if we are currently at the saved answer and if the next input is a number and not a operation
+        # checks to see if we are currently at the saved answer and if the next input is a number and not a operation
+        if self.reset_next_input and self.reset_next_input and str(num).isdigit():
+            # in this case we want to clear it and keep track that we are not at a saved answer anymore
+            self.operator = ""
+            self.reset_next_input = False
         self.operator += str(num)
+        # not at a saved answer anymore
+        self.reset_next_input = False
         return self.operator
 
     def clear(self):
         self.operator = ""
         return self.operator
 
-    # activity 2: create delete function
-
+    # created delete function
+    def delete(self):
+        self.operator = self.operator[:-1]
+        return self.operator
+    
     
     def answer(self):
-        # add logic to save answers for the challenge
-        #hint try except to only save valid answers
-        ans = str(eval(self.operator))
-        self.operator = ans
-        self.operator = ""
-        return ans
-
+        # try except to only save valid answers
+        try:
+            ans = str(eval(self.operator))
+            # saving our answer
+            self.operator = ans
+            # keep track that we are now at the state with a saved answer
+            self.reset_next_input = True
+            return ans
+        except:
+            self.operator = ""
+            return "Error"
 
 
 def main():
